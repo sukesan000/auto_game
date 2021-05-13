@@ -65,13 +65,59 @@ def main():
     pyautogui.click(505, 745)
     
     print("受け取り")
-    bs.screenChk(405, 955, "present1")
+    bs.screenChk(405, 955, "uketori")
 
     print("閉じる")
     bs.screenChk(275, 955, "tojiru")
 
     print("閉じる")
-    bs.screenChk(150, 955, "present1")
+    bs.screenChk(150, 955, "tojiru")
+
+    print("ガチャ")
+    bs.screenChk(500, 985, "gacha")
+
+    print("右へタップ")
+    bs.screenChk(500, 640, "kokan")
+
+    print("サポガチャ")
+    bs.screenChk(445, 830, "10kai")
+
+    print("ガチャ確認")
+    bs.screenChk(400, 680, "10kai")
+
+    print("skip")
+    bs.continuous_tap(505, 985, "kekka")
+
+    print("ガチャ結果")
+    bs.screenChk(400, 970, "kekka")
+
+    while True:
+        sleep(1)
+        bs.screencap()
+        if bs.chkImg('C:\\Users\\kousuke\\Pictures\\uma\\BS\\hiku.PNG'):
+            bs.screenChk(395, 680, "hiku")
+            print("skip")
+            bs.continuous_tap(505, 985, "kekka")
+            print("ガチャ結果")
+            bs.screenChk(400, 970, "kekka")
+        else:
+            print('キャンセル')
+            pyautogui.click(155, 680)
+            break
+    
+    print("戻る")
+    bs.screenChk(160, 960, "modoru")
+
+    print("強化編成")
+    bs.screenChk(55, 995, "kyoka")
+ 
+    print("サポートカード")
+    bs.screenChk(390, 700, "support")
+
+    print("一覧")
+    bs.screenChk(155, 800, "itiran")
+
+
 
     # while True:
     #     print("スクショ")
