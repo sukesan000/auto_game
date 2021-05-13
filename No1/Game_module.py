@@ -10,6 +10,7 @@ class Game_module:
     maxVal = 0
     minLoc = []
     maxLoc = []
+    # id = ''
 
     # LINE
     url = "https://notify-api.line.me/api/notify"
@@ -19,13 +20,16 @@ class Game_module:
     #類似度の設定(0~1)
     threshold = 0.85
     
+    def setId(self, noxId):
+        self.id = noxId
+
     def chkImg(self, dir_temp, isTap):
         result =self.matchTemplate(dir_temp, isTap)
         return result
         
 
     def matchTemplate(self, dir_temp, isTap):
-        dir_input = "D:/Program Files/Nox/bin/pics/_capture.png"
+        dir_input = "D:/Program Files/Nox/bin/pics/No1/_capture1.png"
         
         # キャプチャ画像
         _input = cv2.imread(dir_input)
@@ -84,20 +88,49 @@ class Game_module:
         for pt in zip(*loc[::-1]):
             cnt += 1
             cv2.rectangle(img_rgb, pt, (pt[0] + w, pt[1] + h), (0,0,255), 2)
-        cv2.imwrite('D:/Program Files/Nox/bin/pics/res.png',img_rgb)
+        cv2.imwrite('D:/Program Files/Nox/bin/pics/No1/res.png',img_rgb)
         print('SSRの数' + str(cnt))
         return cnt
 
+    def hokan_matchTemplate(self, dir_temp):
+        dir_input = [
+            "D:/Program Files/Nox/bin/pics/kakeru2.png",
+            "D:/Program Files/Nox/bin/pics/kakeru3.png",
+            ]
+        cnt = 0
+
+        for i in dir_input:
+            img_rgb = cv2.imread(dir_temp)
+            img_gray = cv2.cvtColor(img_rgb, cv2.COLOR_BGR2GRAY)
+            template = cv2.imread(i, 0)
+            w, h = template.shape[::-1]
+
+            res = cv2.matchTemplate(img_gray, template, cv2.TM_CCOEFF_NORMED)
+            self.minVal, self.maxVal, self.minLoc, self.maxLoc = cv2.minMaxLoc(res)
+            print(self.maxVal)
+            threshold = 0.8
+            loc = np.where( res >= threshold)
+            print(loc)
+            if self.threshold < self.maxVal:
+                for pt in zip(*loc[::-1]):
+                    if i == "D:/Program Files/Nox/bin/pics/kakeru2.png":
+                        cnt += 2
+                        print('2')
+                    elif i == "D:/Program Files/Nox/bin/pics/kakeru3.png":
+                        cnt += 3
+                        print('3')
+        return cnt
+
     def screencap(self):
-        _cmd = "nox_adb shell screencap -p /sdcard/_capture.png"
+        _cmd = "nox_adb shell screencap -p /sdcard/_capture1.png"
         self.send_cmd_to_adb(_cmd)
-        _cmd = "nox_adb pull /sdcard/_capture.png pics"
+        _cmd = "nox_adb pull /sdcard/_capture1.png pics/No1"
         self.send_cmd_to_adb(_cmd)
 
     def gacha_screencap(self, imageCnt):
-        _cmd = "nox_adb shell screencap -p /sdcard/gacha_kekka" + str(imageCnt)+ ".png"
+        _cmd = "nox_adb shell screencap -p /sdcard/gacha_kekka1_" + str(imageCnt)+ ".png"
         self.send_cmd_to_adb(_cmd)
-        _cmd = "nox_adb pull /sdcard/gacha_kekka" + str(imageCnt) + ".png" + " pics"
+        _cmd = "nox_adb pull /sdcard/gacha_kekka1_" + str(imageCnt) + ".png" + " pics/No1"
         self.send_cmd_to_adb(_cmd)
 
     def start_app(self, x):
@@ -121,7 +154,7 @@ class Game_module:
     def line_message(self, ssr, image):
         message = 'SSRの数:' + str(ssr)
         payload = {'message': message}
-        if ssr >= 5:
+        if ssr >= 6:
             files = {'imageFile': open(image, 'rb')}
             requests.post(self.url, headers = self.headers, params = payload, files = files)
         else:
